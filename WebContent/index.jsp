@@ -6,7 +6,6 @@
 		<meta charset = 'UTF-8'>
 
 		<title>Image Analyzer</title>
-
 		<link rel = 'stylesheet' href = 'public/stylesheets/bootstrap.min.css'>
 		<link rel = 'stylesheet' href = 'public/stylesheets/style.css'>
 
