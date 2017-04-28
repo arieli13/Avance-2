@@ -4,7 +4,6 @@
 		<meta name = 'viewport' content = 'width =  device-width, initial-scale = 1, user-scalable = no'>
 		<meta name = 'theme-color' content = '#000000'>
 		<meta charset = 'UTF-8'>
-
 		<title>Image Analyzer</title>
 		<link rel = 'stylesheet' href = 'public/stylesheets/bootstrap.min.css'>
 		<link rel = 'stylesheet' href = 'public/stylesheets/style.css'>
