@@ -1,8 +1,15 @@
 package com.principal;
-
-
-public abstract class Imagen implements Cloneable {
   
+  /**
+   * Esta clase representa todos los datos
+   * de una imagen cargada para ser usada
+   * por los algoritmos, accediendo a todos
+   * los datos de la img.
+   * @author ariel
+   *
+   */
+public abstract class Imagen implements Cloneable {
+  //Atributos protegidos correspondientes a los datos de la imagen.
   protected int filas;
   protected int columnas;
   protected String nombre;
@@ -10,6 +17,7 @@ public abstract class Imagen implements Cloneable {
   protected double[] histograma;
   protected Canales canales;
   
+  //Constructor de una Imagen
   public Imagen(String nombre, String formato){
     this.nombre = nombre;
     this.formato = formato;
@@ -59,6 +67,7 @@ public abstract class Imagen implements Cloneable {
       return this.histograma;
   }
   
+  //Funcion que actualiza el histograma con los nuevos datos de la imagen.
   public void actualizarHistograma(){
       calcularHistograma();
   }
