@@ -1,6 +1,4 @@
 package com.principal;
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,10 +8,28 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+/**
+ * Segmenta una imagen, etiqueta las células y las enumera.
+ * 
+ * @author Ariel Rodríguez arieli13.10@gmail.com
+ * @version 1.0
+ * @since 1.0
+ */
 public class Segmentacion extends Algoritmo{
   
+  /**
+   * Cantidad de células contadas en la imagen.
+   */
   int cantCelulas;
+  
+  /**
+   * Arreglo con los centroides de cada célula.
+   */
   ArrayList<Point> centroides;
+  
+  /**
+   * Arreglo con el área de cada célula.
+   */
   ArrayList<Double> areas;
   
   
@@ -22,8 +38,17 @@ public class Segmentacion extends Algoritmo{
     this.areas = new ArrayList<Double>();
     this.cantCelulas = 0;
   }
+  
+  /**
+   * Segmenta una imagen, en caso de no estar en escala de grises, la convierte.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * usa {@link #bwareaopen(Mat, int, Scalar)} para aplicar la segmentación.
+   * @throws Exception Cuando la imagen es nula
+   */
   @Override
-  public void ejecutar(Imagen imagen) {
+  public void ejecutar(Imagen imagen) throws Exception {
     if(!(imagen instanceof ImagenMatOpenCv)){
       return;
     }
@@ -31,7 +56,17 @@ public class Segmentacion extends Algoritmo{
     ((ImagenMatOpenCv)imagen).setImagen(bwareaopen(((ImagenMatOpenCv)imagen).getImagen(), 50, new Scalar(0)));
     return;
   }
-
+  
+  /**
+   * Genera reporte del algoritmo.
+   * 
+   * Genera un reporte del algoritmo realizado, indica la cantidad de célulad y por cada
+   * célula muestra su centroide y su área.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @return Retorna el reporte, un String.
+   */
   @Override
   public String generarReporte() {
     String s = "Total de celulas: "+this.cantCelulas+"\n";
@@ -42,6 +77,15 @@ public class Segmentacion extends Algoritmo{
     return s;
   }
   
+  /**
+   * Calcula el centroide de un conjunto de puntos.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param knots arreglo de pares ordenados, (x, y).
+   * 
+   * @return Centroide de los pares ordenados.
+   */
   private Point centroid(Point[] knots)  {
     double centroidX = 0, centroidY = 0;
     for(Point knot : knots) {
@@ -51,12 +95,38 @@ public class Segmentacion extends Algoritmo{
     return new Point(centroidX / knots.length, centroidY / knots.length);
   }
 
+    /**
+     * Calcula un número random en un rango.
+     * 
+     * @author Ariel Rodríguez arieli13.10@gmail.com
+     * 
+     * @param minimo Cota menor para el random.
+     * 
+     * @param maximo Cota mayor para el random.
+     * 
+     * @return Número entero generado.
+     */
   private int getRandom(int minimo, int maximo){
     return minimo + (int)(Math.random() * maximo);
   }
   
-  private Mat bwareaopen(Mat input, int area, Scalar color)
+  /**
+   * Segmenta una imagen, etiqueta las células y las enumera.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param input Imagen a ser segmentada.
+   * @param area Tamaño mínimo del área de un grupo de pixeles, para tomar como objeto.
+   * @param color Color para pintar los pixeles que no son objetos.
+   * 
+   * @return Imagen segmentada.
+   * @throws Exception Cuando la imagen es nula
+   */
+  private Mat bwareaopen(Mat input, int area, Scalar color) throws Exception
   {
+    if(input == null){
+      throw new Exception("No se pudo aplicar la segmentación");
+    }
     Mat output = input.clone();
     Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGB);
     List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
@@ -82,7 +152,17 @@ public class Segmentacion extends Algoritmo{
     return output;
   }
   
-  public void ejecutarPrueba(Imagen imagen) {
+  /**
+   * Ejecuta la segmentación de una imagen, pero no etiqueta ni enumera células.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param imagen Imagen a ser segmentada.
+   * 
+   * usa {@link #bwareaopenPrueba(Mat, int)} para segmentar la imagen.
+   * @throws Exception Cuando la imagen es nula
+   */
+  public void ejecutarPrueba(Imagen imagen) throws Exception {
     if(!(imagen instanceof ImagenMatOpenCv)){
       return;
     }
@@ -90,8 +170,22 @@ public class Segmentacion extends Algoritmo{
     ((ImagenMatOpenCv)imagen).setImagen(bwareaopenPrueba(((ImagenMatOpenCv)imagen).getImagen(), 50));
   }
   
-  public Mat bwareaopenPrueba(Mat input, int area)
+  /**
+   * Segmenta una imagen, no etiqueta las células ni las enumera.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param input Imagen a ser segmentada.
+   * @param area Tamaño mínimo del área de un grupo de pixeles, para tomar como objeto.
+   * 
+   * @return Imagen segmentada.
+   * @throws Exception Cuando la imagen es nula
+   */
+  public Mat bwareaopenPrueba(Mat input, int area) throws Exception
   {
+    if(input == null){
+      throw new Exception("No se puedo aplicar la segmentación");
+    }
     Mat output = input.clone();
     List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
     Imgproc.findContours(input, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);

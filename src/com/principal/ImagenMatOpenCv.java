@@ -1,6 +1,4 @@
 package com.principal;
-
-
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.ByteArrayInputStream;
@@ -14,14 +12,37 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 
+
+/**
+ * Instancia de Imagen que por dentro utiliza la librería OpenCV para manejar la imagen.
+ * 
+ * @author Ariel Rodríguez arieli13.10@gmail.com
+ *
+ * @version 1.0
+ * 
+ * @since 1.0
+ */
 public class ImagenMatOpenCv extends Imagen{
   
+  /**
+   * Objeto Mat de OpenCV para manejar la imagen
+   */
   private Mat imagen;
 
-  public ImagenMatOpenCv(int filas, int columnas, String nombre, String formato, Canales canales) {
+  /**
+   * Crea una nueva imagen
+   * 
+   * @param filas Número de filas de la imagen
+   * @param columnas Número de columnas de la imagen
+   * @param nombre Nombre de la imagen
+   * @param formato Formato de la imagen
+   * @param canales Canales de la imagen
+   * @throws Exception Cuando no se puede crear la imagen y esta es nula
+   */
+  public ImagenMatOpenCv(int filas, int columnas, String nombre, String formato, Canales canales) throws Exception {
     super(nombre, formato);
     this.canales = canales;
-    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+    System.loadLibrary("opencv-320.jar");
     this.filas = filas;
     this.columnas = columnas;
     if(canales == Canales.C1){
@@ -29,10 +50,21 @@ public class ImagenMatOpenCv extends Imagen{
     }else{
       this.imagen = new Mat(filas, columnas, CvType.CV_8UC3);
     }
+    if(this.imagen == null){
+      throw new Exception("Error al crear la imagen");
+    }
     this.calcularHistograma();
   }
   
-  public ImagenMatOpenCv(String nombre, String formato, byte[] bytes) {
+  /**
+   * Crea una nueva imagen
+   * 
+   * @param nombre Nombre de la imagen
+   * @param formato Formato de la imagen
+   * @param bytes Arreglo de Bytes para crear la imagen
+   * @throws Exception Cuando no se puede crear la imagen y esta es nula
+   */
+  public ImagenMatOpenCv(String nombre, String formato, byte[] bytes) throws Exception {
     super(nombre, formato);
     System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     BufferedImage x = createImageFromBytes(bytes);
@@ -57,25 +89,45 @@ public class ImagenMatOpenCv extends Imagen{
         break;
     }
     this.imagen.put(0, 0, (((DataBufferByte) x.getRaster().getDataBuffer()).getData()));
+    if(this.imagen == null){
+      throw new Exception("Error al crear la imagen");
+    }
     this.calcularHistograma();
   }
   
-  private BufferedImage createImageFromBytes(byte[] imageData) {
+  /**
+   * Crea la imagen Mat apartir de un arreglo de bytes.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param imageData Arreglo de Bytes de la imagen
+   * 
+   * @return Imagen
+   * @throws IOException Cuando no se puede crear la imagen
+   */
+  private BufferedImage createImageFromBytes(byte[] imageData) throws IOException {
     ByteArrayInputStream bais = new ByteArrayInputStream(imageData);
-    try {
-      return ImageIO.read(bais);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+    return ImageIO.read(bais);
   }
 
+  /**
+   * Hace una clonación profunda del objeto
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * @throws Exception Cuando no se puede crear la imagen
+   */
   @Override
-  public Imagen clonar() {
+  public Imagen clonar() throws Exception {
     ImagenMatOpenCv x = new ImagenMatOpenCv(filas, columnas, nombre, formato, canales);
     x.setImagen(this.imagen.clone());
     return x;
   }
 
+  /**
+   * Obtiene el histograma normalizado de la imagen
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   */
   @Override
   public double[] getHistogramaNormalizado() {
     if(canales != Canales.C1){
@@ -89,6 +141,11 @@ public class ImagenMatOpenCv extends Imagen{
     return nuevo;
   }
 
+  /**
+   * Calcula el histograma de la imagen
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   */
   @Override
   public void calcularHistograma() {
     double[] pixeles = new double[256];
@@ -102,24 +159,69 @@ public class ImagenMatOpenCv extends Imagen{
     this.histograma = pixeles;
   }
 
+  /**
+   * Inserta un pixel en la posición x, y de la imagen
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param x Fila del pixel 
+   * @param y Columna del pixel
+   * @param pixel nuevo pixel
+   */
   @Override
   public void setPixelAt(int x, int y, double[] pixel) {
     this.imagen.put(x, y, pixel);
   }
 
+  /**
+   * Obtiene el pixel de una imagen en cierta posición
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param Fila del pixel
+   * @param Columna del pixel
+   */
   @Override
   public double[] getPixelAt(int x, int y) {
     return this.imagen.get(x, y);
   }
   
+  /**
+   * Brinda el objeto Mat
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @return Objeto Mat
+   */
   public Mat getImagen(){
     return this.imagen;
   }
   
-  public void setImagen(Mat imagen){
+  /**
+   * Cambia la imagen Mat
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param imagen Nueva imagen
+   * @throws Exception Cuando no se puede actualizar la imagen
+   */
+  public void setImagen(Mat imagen) throws Exception{
+    if(imagen == null){
+      throw new Exception("Error al actualizar imagen");
+    }
     this.imagen = imagen;
     this.calcularHistograma();
   }
+  
+  /**
+   * Convierte una imagen Mat en una BufferedImage
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * 
+   * @param m Imagen Mat a convertir
+   * 
+   * @return Imagen BufferedImage nueva
+   */
   
   private BufferedImage Mat2BufferedImage(Mat m) {
     int type = BufferedImage.TYPE_BYTE_GRAY;
@@ -135,35 +237,32 @@ public class ImagenMatOpenCv extends Imagen{
     return image;
   }
   
+  /**
+   * Obtiene el arreglo de bytes de la imagen Mat
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com
+   * @throws IOException Cuando no se puede obtener el arreglo de Bytes de la imagen
+   */
+  
   @Override
-  public byte[] getByteArray() {
+  public byte[] getByteArray() throws IOException {
     BufferedImage x = this.Mat2BufferedImage(this.imagen);
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    
-    try {
-      ImageIO.write( x, "jpg", baos );
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    
-    try {
-      baos.flush();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    
+    ImageIO.write( x, "jpg", baos );
+    baos.flush();
     byte[] imageInByte = baos.toByteArray();
-    
-    try {
-      baos.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    baos.close();
     return imageInByte;
   }
   
+  /**
+   * Convierte la imagen a escala de grises
+   * 
+   * @author Ariel Rodríguez Jiménez
+   * @throws Exception Cuando no se puede actualizar la imagen
+   */
   @Override
-  public void toGreyScale() {
+  public void toGreyScale() throws Exception {
     if(this.canales != Canales.C1){
       Mat nueva = new Mat(this.filas, this.columnas, CvType.CV_8UC1);
       Imgproc.cvtColor(this.imagen, nueva, Imgproc.COLOR_BGR2GRAY);

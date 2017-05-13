@@ -51,8 +51,12 @@ public class Conexion extends HttpServlet {
       String[] nombreFormato = dividido[1].split("\\.");
       response.setContentType("text/plain");
       String[] respuesta = x.procesarImagen(imagen[1], nombreFormato[0], nombreFormato[1], TipoImagen.OPENCV);
-     
-      response.getWriter().write(imagen[0]+","+respuesta[0]+"<"+respuesta[1]+"<"+dividido[1]);
+      if(respuesta[0] == "-"){
+        response.getWriter().write(respuesta[0]+"<"+respuesta[1]);
+      }else{
+        response.getWriter().write(imagen[0]+","+respuesta[0]+"<"+respuesta[1]+"<"+dividido[1]);
+      }
+      
 	}
 
 }
