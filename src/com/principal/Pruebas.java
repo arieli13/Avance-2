@@ -33,8 +33,8 @@ public class Pruebas {
       //Kittler k = new Kittler();
       //k.ejecutar(y);
       Segmentacion z = new Segmentacion();
-      z.ejecutarPrueba(y);
-      double dice= getDice(y, n);
+      z.ejecutarSinEtiqueta(y);
+      double dice= y.coeficienteDice(n);
       System.out.println(dice);
       if(dice>0.7){
         assertEquals(1, 1,0);
@@ -44,22 +44,6 @@ public class Pruebas {
     }catch(Exception e){
       System.out.println(e.getMessage());
      }
-  }
-  
-  public double getDice(Imagen x, Imagen z){
-    
-    int filas = x.filas;
-    int columnas = x.columnas;
-    int numerador = 0;
-    int denominador = 0;
-    for(int i = 0; i<filas;i++){
-      for(int y = 0; y<columnas;y++){
-        numerador+=x.getPixelAt(i, y)[0]*z.getPixelAt(i, y)[0];
-        denominador+=x.getPixelAt(i, y)[0]+z.getPixelAt(i, y)[0];
-      }
-    }
-    numerador*=2;
-    return numerador/denominador;
   }
   
   /**

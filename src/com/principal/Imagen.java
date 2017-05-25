@@ -180,6 +180,33 @@ public abstract class Imagen implements Cloneable {
       calcularHistograma();
   }
   
+  /**
+   * Calcula el coeficiente de Dice entre la imagen actual y otra ingresada por parámetro.
+   * 
+   * @author Ariel Rodríguez arieli13.10@gmail.com 
+   *  
+   * @param img Imagen para comparar con la actual y obtener el coeficiente de Dice
+   *  
+   * @return coeficiente de dice.
+   * @throws Exception Cuando 
+   */
+  public double coeficienteDice(Imagen img) throws Exception{
+   if(filas!=img.getFilas() || columnas!=img.getColumnas()){
+     throw new Exception("Las imágenes deben ser de iguales dimensiones.");
+   }
+   double numerador = 0;
+   double denominador = 0;
+   for(int i = 0; i<filas;i++){
+    for(int y = 0; y<columnas;y++){
+ 
+     numerador+= (((img.getPixelAt(i, y)[0]) != 0)?1:0)* ((getPixelAt(i, y)[0]!=0)?1:0);
+     denominador+=(((img.getPixelAt(i, y)[0]) != 0)?1:0)+((getPixelAt(i, y)[0]!=0)?1:0);
+    }
+   }
+   numerador*=2;
+   return numerador/denominador;
+  }
+  
   public abstract Imagen clonar() throws Exception;
   public abstract double[] getHistogramaNormalizado();
   public abstract void calcularHistograma();

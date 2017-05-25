@@ -32,11 +32,24 @@ public class Segmentacion extends Algoritmo{
    */
   ArrayList<Double> areas;
   
+  /**
+   * Area mínima de un objeto para segmentar
+   */
+  int minArea;
+  
   
   public Segmentacion(){
     this.centroides = new ArrayList<Point>();
     this.areas = new ArrayList<Double>();
     this.cantCelulas = 0;
+    this.minArea = 50;
+  }
+  
+  public Segmentacion(int minArea){
+    this.centroides = new ArrayList<Point>();
+    this.areas = new ArrayList<Double>();
+    this.cantCelulas = 0;
+    this.minArea = minArea;
   }
   
   /**
@@ -53,7 +66,7 @@ public class Segmentacion extends Algoritmo{
       return;
     }
     imagen.setCanales(Canales.C3);
-    ((ImagenMatOpenCv)imagen).setImagen(bwareaopen(((ImagenMatOpenCv)imagen).getImagen(), 50, new Scalar(0)));
+    ((ImagenMatOpenCv)imagen).setImagen(bwareaopen(((ImagenMatOpenCv)imagen).getImagen(), minArea, new Scalar(0)));
     return;
   }
   
@@ -87,7 +100,7 @@ public class Segmentacion extends Algoritmo{
    * @return Centroide de los pares ordenados.
    */
   private Point centroid(Point[] knots)  {
-    double centroidX = 0, centroidY = 0;
+    int centroidX = 0, centroidY = 0;
     for(Point knot : knots) {
       centroidX += knot.x;
       centroidY += knot.y;
@@ -162,12 +175,12 @@ public class Segmentacion extends Algoritmo{
    * usa {@link #bwareaopenPrueba(Mat, int)} para segmentar la imagen.
    * @throws Exception Cuando la imagen es nula
    */
-  public void ejecutarPrueba(Imagen imagen) throws Exception {
+  public void ejecutarSinEtiqueta(Imagen imagen) throws Exception {
     if(!(imagen instanceof ImagenMatOpenCv)){
       return;
     }
-    imagen.setCanales(Canales.C1);
-    ((ImagenMatOpenCv)imagen).setImagen(bwareaopenPrueba(((ImagenMatOpenCv)imagen).getImagen(), 50));
+    imagen.setCanales(Canales.C3);
+    ((ImagenMatOpenCv)imagen).setImagen(bwareaopenSinEtiqueta(((ImagenMatOpenCv)imagen).getImagen(), minArea));
   }
   
   /**
@@ -181,22 +194,37 @@ public class Segmentacion extends Algoritmo{
    * @return Imagen segmentada.
    * @throws Exception Cuando la imagen es nula
    */
-  public Mat bwareaopenPrueba(Mat input, int area) throws Exception
+  public Mat bwareaopenSinEtiqueta(Mat input, int area) throws Exception
   {
     if(input == null){
-      throw new Exception("No se puedo aplicar la segmentación");
+      throw new Exception("No se pudo aplicar la segmentación");
     }
     Mat output = input.clone();
+    Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGB);
     List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
     Imgproc.findContours(input, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+    
     for (int i = 0; i < contours.size(); i++){
       if (Imgproc.contourArea(contours.get(i)) < area){
-        Imgproc.drawContours(output, contours, i, new Scalar(0), -1);
+        Imgproc.drawContours(output, contours, i, new Scalar(0, 0, 0), -1);
       }else{
-        Imgproc.drawContours(output, contours, i, new Scalar(1), -1);
+        Imgproc.drawContours(output, contours, i, new Scalar(255, 255, 255), -1);
+        Point[] x = contours.get(i).toArray();
+        this.cantCelulas++;
+        Point centroide = centroid(x);
+        this.centroides.add(centroide);
+        this.areas.add(Imgproc.contourArea(contours.get(i)));
       }
     }
     return output;
+  }
+  
+  /**
+   * Asigna el valor del area mínima
+   * @param minArea
+   */
+  public void setMinArea(int minArea){
+    this.minArea = minArea;
   }
   
 }

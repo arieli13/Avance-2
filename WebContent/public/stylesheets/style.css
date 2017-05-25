@@ -7,6 +7,30 @@ a, input {
 	outline: none !important;
 }
 
+.thumb-container .tooltiptext {
+	background-color: rgba( 10, 10, 10, 0.8);
+	transition: opacity 0.5s;
+	text-overflow: ellipsis;
+	visibility: hidden;
+	text-align: center;
+	padding: .2em .5em;
+	position: absolute;
+	margin-left: -5.5em;
+	margin-top: -.2em;
+	overflow: hidden;
+	color: #FFFFFF;
+	height: 100%;
+	width: 100%;
+	opacity: 0;
+	z-index: 1;
+	left: 50%;
+}
+
+.thumb-container:hover .tooltiptext {
+	visibility: visible;
+	opacity: 1;
+}
+
 /*------------------------------------------------------------------------------------------------*/
 /*Buttons*/
 .sidebar-button,
@@ -23,6 +47,15 @@ a, input {
 	font-size: 1.1em;
 	color: #FFFFFF;
 	display: block;
+}
+
+.navbar-button {
+	position: relative;
+	top: -2.3em;
+	background-color: #EEEEEE;
+	padding: .5em 1em;
+	font-size: 1.1em;
+	border-radius: .1em;
 }
 
 .image-upload {
@@ -118,6 +151,8 @@ a, input {
 
 .thumb-container {
 	border: .1em solid #EEEEEE;
+	display: inline-block;
+	position: relative;
 	text-align: center;
 	margin-right: 0.5%;
 	margin-left: 0.5%;

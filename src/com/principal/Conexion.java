@@ -43,20 +43,43 @@ public class Conexion extends HttpServlet {
 	 */
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	  String s = request.getReader().readLine();
-      String[] dividido = s.split("<");
-      String[] imagen = dividido[0].split(",");
-      Sistema x = Sistema.getInstancia();
-      String[] nombreFormato = dividido[1].split("\\.");
-      response.setContentType("text/plain");
-      String[] respuesta = x.procesarImagen(imagen[1], nombreFormato[0], nombreFormato[1], TipoImagen.OPENCV);
-      if(respuesta[0] == "-"){
-        response.getWriter().write(respuesta[0]+"<"+respuesta[1]);
-      }else{
-        response.getWriter().write(imagen[0]+","+respuesta[0]+"<"+respuesta[1]+"<"+dividido[1]);
-      }
-      
+	  try{
+	    String s = request.getReader().readLine();
+	    String[] dividido = s.split("<");
+	    if(dividido[0].charAt(0) == '0'){ // Si es 0 entonces se aplica la segmentación, sino se aplica Dice
+	      dividido[0] = dividido[0].substring(1);
+	      String[] imagen = dividido[0].split(",");
+	      Sistema x = Sistema.getInstancia();
+	      String[] nombreFormato = dividido[1].split("\\.");
+	      response.setContentType("text/plain");
+	      long inicio = System.currentTimeMillis();
+	      String[] respuesta = x.procesarImagen(imagen[1], nombreFormato[0], nombreFormato[1], TipoImagen.OPENCV, Integer.parseInt(dividido[2]), Integer.parseInt(dividido[3]));
+	      long fin   = System.currentTimeMillis();
+	      long totalTime = fin - inicio;  
+	      if(respuesta[0] == "-"){ //Ocurre error al procesar imagen
+	       response.getWriter().write(respuesta[0]+"<"+respuesta[1]);
+	      }else{
+	       response.getWriter().write(imagen[0]+","+respuesta[0]+"<"+respuesta[1]+"<"+dividido[1]+"<"+totalTime);
+	      }
+	    }else{ //Se aplica Dice
+	      dividido[0] = dividido[0].substring(1);
+          
+	      String[] imagen1 = dividido[0].split(",");
+	      String[] imagen2 = dividido[1].split(",");
+	      
+          String nombre = dividido[2];
+          
+          response.setContentType("text/plain");
+
+          Sistema x = Sistema.getInstancia();
+          
+          String[] respuesta = x.calcularDice(imagen1[1], imagen2[1], nombre, "png", TipoImagen.OPENCV);
+          
+          response.getWriter().write(nombre+";"+respuesta[1]);
+	    }
+	  }catch(Exception e){
+	    response.getWriter().write("-<"+e.getMessage());
+	  }
 	}
 
 }

@@ -42,7 +42,7 @@ public class ImagenMatOpenCv extends Imagen{
   public ImagenMatOpenCv(int filas, int columnas, String nombre, String formato, Canales canales) throws Exception {
     super(nombre, formato);
     this.canales = canales;
-    System.loadLibrary("opencv-320.jar");
+    System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     this.filas = filas;
     this.columnas = columnas;
     if(canales == Canales.C1){
@@ -119,7 +119,12 @@ public class ImagenMatOpenCv extends Imagen{
   @Override
   public Imagen clonar() throws Exception {
     ImagenMatOpenCv x = new ImagenMatOpenCv(filas, columnas, nombre, formato, canales);
-    x.setImagen(this.imagen.clone());
+    for(int i = 0; i<filas;i++){
+      for(int j = 0; j<columnas;j++){
+        x.setPixelAt(i, j, this.getPixelAt(i, j));
+      }
+    }
+    //x.setImagen(this.imagen.clone());
     return x;
   }
 

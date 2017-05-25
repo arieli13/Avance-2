@@ -9,13 +9,13 @@
 		<link rel = 'stylesheet' href = 'public/stylesheets/style.css'>
 
 		<script src = 'public/javascripts/angular.min.js'></script>
-		
 	</head>
 
 	<body ng-controller = 'indexController'>
 		<div class = 'navbar'>
 			<div class = 'container'>
 				<h4 class = 'navbar-title'>Image Analyzer</h4>
+				<a class = 'navbar-button pull-right' ng-click = 'clearImages()'>Clear images</a>
 			</div>
 		</div>
 
@@ -25,22 +25,34 @@
 				<hr class = 'divider'/>
 				<div class = 'image-upload'>
 					<span>Select Images</span>
-					<input class = 'upload' type = 'file' accept=".jpg, .jpeg, .png, .bmp" multiple onchange = 'angular.element (this).scope ().imageUpload (event)'/>
+					<input class = 'upload' type = 'file' accept = '.jpg, .jpeg, .png, .bmp' multiple onchange = 'angular.element (this).scope ().imageUpload (event)'/>
 				</div>
 				<a class = 'sidebar-button' ng-click = 'uploadExecute ()'>Upload and execute</a>
+				<a class = 'sidebar-button' ng-click = 'diceAlgorithm ()'>Dice Algorithm</a>
+
+				Min area: <input type = 'number' min = '0' ng-model = 'minArea' value = "50"/>
+				<br>
+				<br>
+				Etiquetar al segmentar: <input type="checkbox" ng-model="segmentar"
+           										ng-true-value="1" ng-false-value="0" checked>
 
 				<h4 class = 'sidebar-title'>History</h4>
 				<hr class = 'divider'/>
 				<div class = 'processes'>
-					<a class = 'process-button' ng-repeat = 'process in processes' ng-dblclick = 'downloadProcess($index)' ng-click = 'showProcess ( $index )'>Process {{ $index }} 
-						<span class = 'glyphicon glyphicon-menu-right pull-right'></span>
+					<a class = 'process-button' ng-repeat = 'process in processes' ng-dblclick = 'downloadProcess($index)' ng-click = 'showProcess ( $index )'>Process {{ $index }}
+					<span>Time: {{process.time}} ms</span>
 					</a>
 				</div>
 			</div>
 
 			<div id = 'list' class = 'col-md-offset-3 col-md-9 col-sm-offset-4 col-sm-8 col-xs-offset-4 col-xs-8 content'>
 				<div class = 'thumb-container' ng-repeat = 'image in images'>
-					<img class = 'thumb' ng-src = '{{ image.src }}' ng-dblclick = 'downloadImage($index)'>
+					<img class = 'thumb' ng-src = '{{ image.src }}'>
+  					<span class = 'tooltiptext' ng-dblclick = 'downloadImage($index)'>
+  						<span>Name: {{ image.title }}</span>
+  						<br/>
+  						<span ng-show = 'image.time'>Time: {{ image.time }} ms</span>
+  					</span>
 				</div>
 			</div>
 		</div>
