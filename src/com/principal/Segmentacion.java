@@ -82,10 +82,11 @@ public class Segmentacion extends Algoritmo{
    */
   @Override
   public String generarReporte() {
-    String s = "Total de celulas: "+this.cantCelulas+"\n";
+    String s = "Total de celulas;"+this.cantCelulas+"\n";
+    s+="Cell Number;X Centroid;Y Centroid;Area\n";
     for(int i = 0; i<this.cantCelulas;i++){
       Point x = this.centroides.get(i);
-      s+= i+1+": Centroide: ("+x.x+", "+x.y+"), area: "+this.areas.get(i)+"\n";
+      s+= i+1+";"+x.x+";"+x.y+";"+this.areas.get(i)+"\n";
     }
     return s;
   }

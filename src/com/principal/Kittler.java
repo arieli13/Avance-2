@@ -63,7 +63,7 @@ public class Kittler extends Algoritmo{
    */
   @Override
   public String generarReporte() {
-    String s = "Algoritmo de Kittler, Umbral óptimo: "+Double.toString(this.umbral)+"\n";
+    String s = "Algoritmo de Kittler;Umbral optimo;"+Double.toString(this.umbral)+"\n";
     return s;
   }
   

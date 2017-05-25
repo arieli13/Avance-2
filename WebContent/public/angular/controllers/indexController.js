@@ -4,8 +4,10 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	
 	$scope.minArea = "50";
 	$scope.segmentar = "0";
+	$scope.yaProcesadas = false;
 
 	$scope.clearImages = function () {
+		$scope.yaProcesadas = false;
 		$scope.images = [];
 	}
 	
@@ -24,11 +26,14 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	$scope.diceAlgorithm = function () {
 		if ($scope.images.length == 0){
 			alert ('You have to select at least one image to process');
+			$scope.yaProcesadas = false;
 			return;
 		}
 		var couple = [];
 		if($scope.images.length %2 !=0){
 			alert ("Verify that there are two images with the same name. Please reupload the images.");
+			$scope.images = [];
+			$scope.yaProcesadas = false;
 			return;
 		}
 		for (var i = 0; i < $scope.images.length; i++) {
@@ -46,6 +51,7 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 		if ($scope.images.length > 0) {
 			alert ("Verify that there are two images with the same name. Please reupload the images.");
 			$scope.images = [];
+			$scope.yaProcesadas = false;
 			return;
 		}
 
@@ -66,12 +72,11 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	        	if(tamannio == tamannioImages){
 	        		alert("Done!");
 	        		download(metricas, "Dice.csv");
-	        		//console.log(metricas);
-	        		
 	        	}
 	        })
 	        
 	    }
+	    $scope.yaProcesadas = false;
 	}
 	
 	$scope.imageUpload = function(event){
@@ -95,12 +100,20 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	
 	
 	$scope.uploadExecute = function () {
+		if($scope.yaProcesadas){
+			alert("Some of the selected images are already processed. Please select new images");
+			return;
+		}
 		if ($scope.images.length == 0){
 			alert ('You have to select at least one image to process');
 			return;
 		}else {
 		    if(!$scope.isInteger($scope.minArea)){
 		    	alert("Please enter a valid number for the min area");
+		    	return;
+		    }
+		    
+		    if(!confirm('Execute Process?')){
 		    	return;
 		    }
 		    
@@ -137,7 +150,9 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	}
 
 	$scope.showProcess = function (index) {
+		
 		$scope.images = [];
+		$scope.yaProcesadas = true;
 		for(var i = 0; i<$scope.processes[index].imgs.length;i++){
 			$scope.images.push( {src: $scope.processes[index].imgs[i]['src'], csv: $scope.processes[index].imgs[i]['csv'], title: $scope.processes[index].imgs[i]['title'], time: $scope.processes[index].imgs[i]['time']} );
 		}
