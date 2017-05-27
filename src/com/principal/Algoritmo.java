@@ -1,7 +1,7 @@
 package com.principal;
 
 /**
- * Clase abstracta para los algoritmos que se le aplicarán a una imagen.
+ * Clase abstracta para los algoritmos que se le aplicarán a una imagen
  * 
  * @author Kevin Ramírez
  * 
