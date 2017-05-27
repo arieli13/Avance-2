@@ -131,8 +131,8 @@ public class Kittler extends Algoritmo{
    * @throws Exception Cuando el rando de los parámetros está mal o el histograma es nulo
    */
   private double sumatoriaHistograma(int inicio, int fin, double[] histogramaNormalizado) throws Exception{
-    if(inicio < 0 || fin < 0 || inicio > 255 || fin > 255){
-      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 255");
+    if(inicio < 0 || fin < 0 || inicio > 256 || fin > 256){
+      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 256");
     }
     if(histogramaNormalizado == null){
       throw new Exception("El histograma normalizado de la imagen no puede ser nulo");
@@ -157,8 +157,9 @@ public class Kittler extends Algoritmo{
    * @throws Exception Cuando el rando de los parámetros está mal o el histograma es nulo
    */
   private double sumatoriaVarianciaHistograma(int inicio, int fin, double u, double[] histogramaNormalizado) throws Exception{
-    if(inicio < 0 || fin < 0 || inicio > 255 || fin > 255){
-      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 255");
+    
+    if(inicio < 0 || fin < 0 || inicio > 256 || fin > 256){
+      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 256");
     }
     if(histogramaNormalizado == null){
       throw new Exception("El histograma normalizado de la imagen no puede ser nulo");
@@ -183,8 +184,10 @@ public class Kittler extends Algoritmo{
    * @throws Exception Cuando el rando de los parámetros está mal o el histograma es nulo
    */
   private double sumatoriaEsperanzaHistograma(int inicio, int fin, double[] histogramaNormalizado) throws Exception{
-    if(inicio < 0 || fin < 0 || inicio > 255 || fin > 255){
-      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 255");
+    if(inicio < 0 || fin < 0 || inicio > 256 || fin > 256){
+      System.out.println(inicio);
+      System.out.println(fin);
+      //throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 256");
     }
     if(histogramaNormalizado == null){
       throw new Exception("El histograma normalizado de la imagen no puede ser nulo");
