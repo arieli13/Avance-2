@@ -34,6 +34,9 @@ public class Kittler extends Algoritmo{
     if(imagen == null){
       throw new Exception("Error al aplicar el algoritmo de Kittler");
     }
+    if(imagen.getCanales()!=Canales.C1){
+      throw new Exception("La imagen debe de estar en escala de grises para aplicarle Kittler");
+    }
     double umbral = kittler(imagen.getHistogramaNormalizado())[0];
     int filas = imagen.getFilas();
     int columnas = imagen.getColumnas();
@@ -81,21 +84,22 @@ public class Kittler extends Algoritmo{
    * @param y es el histograma de la imagen, en escala de grises.
    * 
    * @return retorna un arreglo de double de 5 elementos. El 0: umbral óptimo, 1: esperanza 1, 2: esperanza 2, 3: varianza 1, 4: varianza 2
+   * @throws Exception 
    */
-  public double[] kittler(double[] y){
+  public double[] kittler(double[] histogramaNormalizado) throws Exception{
     double[] pixelOptimo = new double[5];
     double umbralOptimo = Double.MAX_VALUE;
     
     for(int i = 0; i<256;i++){
-      double p1 = sumatoriaHistograma(0, i, y);
+      double p1 = sumatoriaHistograma(0, i, histogramaNormalizado);
       double p2 = 1-p1;
       if(p1 == 0|| p2 == 0){
         continue;
       }
-      double u1 = sumatoriaEsperanzaHistograma(0, i, y)/p1;
-      double u2 = sumatoriaEsperanzaHistograma(i+1, 255, y)/p2;
-      double o1 = sumatoriaVarianciaHistograma(0, i, u1, y)/p1;
-      double o2 = sumatoriaVarianciaHistograma(i+1, 255, u2, y)/p2;
+      double u1 = sumatoriaEsperanzaHistograma(0, i, histogramaNormalizado)/p1;
+      double u2 = sumatoriaEsperanzaHistograma(i+1, 255, histogramaNormalizado)/p2;
+      double o1 = sumatoriaVarianciaHistograma(0, i, u1, histogramaNormalizado)/p1;
+      double o2 = sumatoriaVarianciaHistograma(i+1, 255, u2, histogramaNormalizado)/p2;
       
       if(o1 == 0 || o2 == 0){
         continue;
@@ -124,8 +128,15 @@ public class Kittler extends Algoritmo{
    * @param histogramaNormalizado histograma para el cual se aplica la sumatoria.
    * 
    * @return retorna el resultado de la sumatoria.
+   * @throws Exception Cuando el rando de los parámetros está mal o el histograma es nulo
    */
-  private double sumatoriaHistograma(int inicio, int fin, double[] histogramaNormalizado){
+  private double sumatoriaHistograma(int inicio, int fin, double[] histogramaNormalizado) throws Exception{
+    if(inicio < 0 || fin < 0 || inicio > 255 || fin > 255){
+      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 255");
+    }
+    if(histogramaNormalizado == null){
+      throw new Exception("El histograma normalizado de la imagen no puede ser nulo");
+    }
     double suma = 0;
      for(int i = inicio; i<=fin;i++){
        suma = suma+histogramaNormalizado[i];
@@ -143,8 +154,15 @@ public class Kittler extends Algoritmo{
    * @param histogramaNormalizado histograma para el cual se aplica la sumatoria.
    * 
    * @return retorna el resultado de la sumatoria.
+   * @throws Exception Cuando el rando de los parámetros está mal o el histograma es nulo
    */
-  private double sumatoriaVarianciaHistograma(int inicio, int fin, double u, double[] histogramaNormalizado){
+  private double sumatoriaVarianciaHistograma(int inicio, int fin, double u, double[] histogramaNormalizado) throws Exception{
+    if(inicio < 0 || fin < 0 || inicio > 255 || fin > 255){
+      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 255");
+    }
+    if(histogramaNormalizado == null){
+      throw new Exception("El histograma normalizado de la imagen no puede ser nulo");
+    }
     double suma = 0;
     for(int i = inicio; i<=fin;i++){
       suma+=histogramaNormalizado[i]*Math.pow((i-u), 2);
@@ -162,8 +180,15 @@ public class Kittler extends Algoritmo{
    * @param histogramaNormalizado histograma para el cual se aplica la sumatoria.
    * 
    * @return retorna el resultado de la sumatoria.
+   * @throws Exception Cuando el rando de los parámetros está mal o el histograma es nulo
    */
-  private double sumatoriaEsperanzaHistograma(int inicio, int fin, double[] histogramaNormalizado){
+  private double sumatoriaEsperanzaHistograma(int inicio, int fin, double[] histogramaNormalizado) throws Exception{
+    if(inicio < 0 || fin < 0 || inicio > 255 || fin > 255){
+      throw new Exception("Los valores inicio y fin deben de ser mayores o iguales a 0 y menores o iguales a 255");
+    }
+    if(histogramaNormalizado == null){
+      throw new Exception("El histograma normalizado de la imagen no puede ser nulo");
+    }
     double suma = 0;
     for(int i = inicio; i<=fin;i++){
       suma = suma+(i*histogramaNormalizado[i]);

@@ -1,5 +1,4 @@
 package com.principal;
-import java.io.IOException;
 
 import org.apache.tomcat.util.codec.binary.Base64;
 /**
@@ -21,9 +20,13 @@ public class ImagenCodificadorBase64Tomcat extends ImagenCodificador{
    * @param s Imagen codificada en Base64
    * 
    * @return Arreglo de Bytes, la imagen decodificada
+   * @throws Exception Cuando el string es nulo o vacío
    */
   @Override
-  public byte[] decodificarImagen(String s) {
+  public byte[] decodificarImagen(String s) throws Exception {
+    if(s == null || s == ""){
+      throw new Exception("El str de la imagen a decodificar no puede ser vacío");
+    }
     return Base64.decodeBase64(s);
   }
 
@@ -35,10 +38,13 @@ public class ImagenCodificadorBase64Tomcat extends ImagenCodificador{
    * @param s Imagen a ser codificada
    * 
    * @return String en Base64 de la imagen codificada.
-   * @throws IOException Cuando la imagen es nula
+   * @throws Exception Cuando la imagen es nula
    */
   @Override
-  public String codificarImagen(Imagen i) throws IOException {
+  public String codificarImagen(Imagen i) throws Exception {
+    if(i == null){
+      throw new Exception("La imagen a codificar no puede ser nula");
+    }
     return Base64.encodeBase64String(i.getByteArray());
   }
 

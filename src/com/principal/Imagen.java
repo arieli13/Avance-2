@@ -45,7 +45,10 @@ public abstract class Imagen implements Cloneable {
    */
   protected Canales canales;
   
-  public Imagen(String nombre, String formato){
+  public Imagen(String nombre, String formato) throws Exception{
+    if(nombre == "" || formato == ""){
+        throw new Exception("El nombre y el formato no pueden ser nulos");
+    }
     this.nombre = nombre;
     this.formato = formato;
   }
@@ -56,8 +59,12 @@ public abstract class Imagen implements Cloneable {
    * @author Ariel Rodríguez arieli13.10@gmail.com 
    * 
    * @param nombre Nuevo nombre de la imagen
+   * @throws Exception Cuando el nombre es nulo
    */
-  public void setNombre(String nombre){
+  public void setNombre(String nombre) throws Exception{
+    if(nombre == ""){
+      throw new Exception("El nombre no puede ser nulo");
+    }
     this.nombre = nombre;
   }
   
@@ -67,8 +74,12 @@ public abstract class Imagen implements Cloneable {
    * @author Ariel Rodríguez arieli13.10@gmail.com 
    * 
    * @param formato Nuevo formato de la imagen
+   * @throws Exception 
    */
-  public void setFormato(String formato){
+  public void setFormato(String formato) throws Exception{
+    if(formato == ""){
+      throw new Exception("El formato no puede ser nulo");
+    }
     this.formato = formato;
   }
   
@@ -78,8 +89,12 @@ public abstract class Imagen implements Cloneable {
    * @author Ariel Rodríguez arieli13.10@gmail.com 
    * 
    * @param filas Nuevo número de filas
+   * @throws Exception Cuando las filas menores o iguales a 0
    */
-  public void setFilas(int filas){
+  public void setFilas(int filas) throws Exception{
+    if(filas<=0){
+      throw new Exception("Las filas no pueden ser nulas");
+    }
     this.filas = filas;
   }
   
@@ -89,8 +104,12 @@ public abstract class Imagen implements Cloneable {
    * @author Ariel Rodríguez arieli13.10@gmail.com
    * 
    * @param columnas Nuevo número de columnas
+   * @throws Exception Cuando las columnas son menores o iguales a 0
    */
-  public void setColumnas(int columnas){
+  public void setColumnas(int columnas) throws Exception{
+    if(columnas<=0){
+      throw new Exception("Las columnas tienen que ser mayores a 0");
+    }
     this.columnas = columnas;
   }
   
@@ -188,9 +207,12 @@ public abstract class Imagen implements Cloneable {
    * @param img Imagen para comparar con la actual y obtener el coeficiente de Dice
    *  
    * @return coeficiente de dice.
-   * @throws Exception Cuando 
+   * @throws Exception Cuando la imagen es nula o las filas y columnas no son las mismas
    */
   public double coeficienteDice(Imagen img) throws Exception{
+   if(img == null){
+     throw new Exception("No se puede comparar una imagen con otra nula");
+   }
    if(filas!=img.getFilas() || columnas!=img.getColumnas()){
      throw new Exception("Las imágenes deben ser de iguales dimensiones.");
    }

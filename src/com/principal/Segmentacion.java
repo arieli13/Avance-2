@@ -62,8 +62,11 @@ public class Segmentacion extends Algoritmo{
    */
   @Override
   public void ejecutar(Imagen imagen) throws Exception {
+    if(imagen == null){
+      throw new Exception("Para la segmentación la imagen no puede ser nula");
+    }
     if(!(imagen instanceof ImagenMatOpenCv)){
-      return;
+      throw new Exception("Para la segmentación, la imagen debe de ser de OpenCV");
     }
     imagen.setCanales(Canales.C3);
     ((ImagenMatOpenCv)imagen).setImagen(bwareaopen(((ImagenMatOpenCv)imagen).getImagen(), minArea, new Scalar(0)));
@@ -99,8 +102,12 @@ public class Segmentacion extends Algoritmo{
    * @param knots arreglo de pares ordenados, (x, y).
    * 
    * @return Centroide de los pares ordenados.
+   * @throws Exception Cuando los knots son nulos
    */
-  private Point centroid(Point[] knots)  {
+  private Point centroid(Point[] knots) throws Exception  {
+    if(knots == null){
+      throw new Exception("El arreglo de puntos no puede ser nulo");
+    }
     int centroidX = 0, centroidY = 0;
     for(Point knot : knots) {
       centroidX += knot.x;
@@ -119,8 +126,12 @@ public class Segmentacion extends Algoritmo{
      * @param maximo Cota mayor para el random.
      * 
      * @return Número entero generado.
+     * @throws Exception Cuando el mínimo es mayor al máximo
      */
-  private int getRandom(int minimo, int maximo){
+  private int getRandom(int minimo, int maximo) throws Exception{
+    if(minimo>maximo){
+      throw new Exception("La cota máxima debe ser mayor a la cota menor para el random");
+    }
     return minimo + (int)(Math.random() * maximo);
   }
   
@@ -140,6 +151,12 @@ public class Segmentacion extends Algoritmo{
   {
     if(input == null){
       throw new Exception("No se pudo aplicar la segmentación");
+    }
+    if(area<0){
+      throw new Exception("El area debe ser mayor que 0");
+    }
+    if(color ==null){
+      throw new Exception("El color no puede ser nulo");
     }
     Mat output = input.clone();
     Imgproc.cvtColor(output, output, Imgproc.COLOR_GRAY2RGB);
