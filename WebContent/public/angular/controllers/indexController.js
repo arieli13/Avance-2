@@ -2,9 +2,21 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	$scope.images = [];
 	$scope.processes = [];
 	
-	$scope.minArea = "50";
+	$scope.minArea = "";
 	$scope.segmentar = "0";
 	$scope.yaProcesadas = false;
+	$scope.error = "";
+	$scope.ejecutando = "";
+	
+	$scope.printError = function(){
+		var div = document.getElementById('errorDiv');
+		div.setAttribute("style", "display:block;color:red;");
+	}
+	
+	$scope.dontPrintError = function(){
+		var div = document.getElementById('errorDiv');
+		div.setAttribute("style", "display:none");
+	}
 
 	$scope.clearImages = function () {
 		$scope.yaProcesadas = false;
@@ -25,13 +37,15 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 
 	$scope.diceAlgorithm = function () {
 		if ($scope.images.length == 0){
-			alert ('You have to select at least one image to process');
+			$scope.error = 'You have to select at least one image to process';
+			$scope.printError();
 			$scope.yaProcesadas = false;
 			return;
 		}
 		var couple = [];
 		if($scope.images.length %2 !=0){
-			alert ("Verify that there are two images with the same name. Please reupload the images.");
+			$scope.error = "Verify that there are two images with the same name. Please reupload the images.";
+			$scope.printError();
 			$scope.images = [];
 			$scope.yaProcesadas = false;
 			return;
@@ -49,7 +63,8 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 		}
 
 		if ($scope.images.length > 0) {
-			alert ("Verify that there are two images with the same name. Please reupload the images.");
+			$scope.error = "Verify that there are two images with the same name. Please reupload the images.";
+			$scope.printError();
 			$scope.images = [];
 			$scope.yaProcesadas = false;
 			return;
@@ -59,6 +74,8 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	    var tamannio = 0;
 	    var tamannioImages = couple.length;
 	    var metricas = ""; //Este string se va formando con lo que retorna cada proceso de dice
+	    var erroresEnProceso = "";
+	    $scope.ejecutando = "Executed: 0%";
 	    for(var i = 0; i<couple.length;i++){
 	    	string=couple[i].img1+"<"+couple[i].img2+"<"+couple[i].title;
 	    	$http({
@@ -67,16 +84,28 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	            contentType: 'application/json',
 	            data : '1'+string,
 	        }).success(function(data) {
-	        	metricas+= data+"\n";
+	        	if(data[0] == "-"){
+	        		var s = data.split("<");
+	        		erroresEnProceso+="ERROR: "+s[1]+"\n";
+	        	}else{
+	        		metricas+= data+"\n";
+	        	}
 	        	tamannio++;
+	        	$scope.ejecutando = "Executing: "+(tamannio*100/tamannioImages)+"%";
 	        	if(tamannio == tamannioImages){
-	        		alert("Done!");
-	        		download(metricas, "Dice.csv");
+	        		$scope.ejecutando = "Executed: 100%";
+	        		if(erroresEnProceso!=""){
+	        			alert(erroresEnProceso);
+	        		}
+	        		if(metricas!=""){
+	        			download(metricas, "Dice.csv");
+	        		}
 	        	}
 	        })
 	        
 	    }
 	    $scope.yaProcesadas = false;
+	    $scope.dontPrintError();
 	}
 	
 	$scope.imageUpload = function(event){
@@ -101,19 +130,23 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 	
 	$scope.uploadExecute = function () {
 		if($scope.yaProcesadas){
-			alert("Some of the selected images are already processed. Please select new images");
+			$scope.error = "Some of the selected images are already processed. Please select new images";
+			$scope.printError();
 			return;
 		}
 		if ($scope.images.length == 0){
-			alert ('You have to select at least one image to process');
+			$scope.error = 'You have to select at least one image to process';
+			$scope.printError();
 			return;
 		}else {
 		    if(!$scope.isInteger($scope.minArea)){
-		    	alert("Please enter a valid number for the min area");
+		    	$scope.error = "Please enter a valid number for the min area";
+		    	$scope.printError();
 		    	return;
 		    }
 		    
 		    if(!confirm('Execute Process?')){
+		    	$scope.dontPrintError();
 		    	return;
 		    }
 		    
@@ -123,6 +156,8 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 		    var tamannioImages = $scope.images.length;
 		    var inicio = performance.now ();
 		    var tiempo = 0;
+		    $scope.ejecutando = "Executed: 0%";
+		    var erroresEnProceso = ""; //Va copiando los errores que tira cada imagen.
 		    for(var i = 0; i<$scope.images.length;i++){
 		    	string=$scope.images[i]['src']+"<"+$scope.images[i]['title'];
 		    	$http({
@@ -132,21 +167,29 @@ app.controller ('indexController', ['$scope', '$http', function ($scope, $http) 
 		            data : '0'+string+"<"+$scope.minArea+"<"+$scope.segmentar,
 		        }).success(function(data) {
 		        	var s = data.split("<");
-		        	arreglo.push ({src: s[0], csv: s[1], title: s[2], time: s[3]});
+		        	if(s[0] == "-"){
+		        		erroresEnProceso+="ERROR: "+s[1]+"\n";
+		        	}else{
+		        		arreglo.push ({src: s[0], csv: s[1], title: s[2], time: s[3]});
+		        	}
 		        	tamannio++;
+		        	$scope.ejecutando = "Executing: "+(tamannio*100/tamannioImages)+"%";
+		        	
 		        	if(tamannio == tamannioImages){
+		        		$scope.ejecutando = "Executed: 100%";
 		        		var final = performance.now ();
 		        		tiempo = final - inicio;
 		        		$scope.processes.push({imgs: arreglo, time: tiempo});
 		    		    $scope.images = [];
-		        		alert("Done!");
-		        		
+		        		if(erroresEnProceso!=""){
+		        			alert(erroresEnProceso);
+		        		}
 		        	}
 		        })
 		        
 		    }
 		}
-		
+		$scope.dontPrintError();
 	}
 
 	$scope.showProcess = function (index) {

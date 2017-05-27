@@ -35,6 +35,16 @@
 				<br>
 				Etiquetar al segmentar: <input type="checkbox" ng-model="segmentar"
            										ng-true-value="1" ng-false-value="0" checked>
+           		<br>
+           		<br>
+           		<div style = "display:none" id = "errorDiv">
+           			Error: {{error}}
+           		</div>
+           		<br>
+           		<br>
+           		<div style = "color:green">
+           			{{ejecutando}}
+           		</div>
 
 				<h4 class = 'sidebar-title'>History</h4>
 				<hr class = 'divider'/>
